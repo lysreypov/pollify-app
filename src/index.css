@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: Poppins, sans-serif;
+}
+
+body {
+  background-color: #fafbfc;
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    background-color: #ffffff;
+  }
+}
+
+/* .custom-line {
+  height: 0.05rem;
+  width: 50%;
+  background-color: #a0aec0;
+} */
+
+/* remove scrollbar */
+*::-webkit-scrollbar {
+  width: 0;
+}
+
+/* users section scrollbar */
+.home-scrolling::-webkit-scrollbar {
+  margin-top: 10px;
+  width: 10px;
+  height: 10px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+.home-scrolling::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4;
+  width: 2px;
+  border-radius: 10px;
+}
