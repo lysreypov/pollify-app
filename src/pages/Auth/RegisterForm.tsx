@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import pollifyLogo from "../../assets/PolliFy.png";
+import GoogleLogin from "react-google-login";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import {
@@ -12,15 +13,20 @@ import {
   setEmail,
   setPassword,
   setIsAgree,
+  setPasswordErrorMessage,
 } from "../../redux/slices/RegisterForm";
+
+const clientId =
+  "169663001832-rnhhvl1ump4dj98k56gi44ejt8h5i0mn.apps.googleusercontent.com";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
-  const { username, email, password, isAgree } = useSelector(
+  const { username, email, password, isAgree, errorMessage } = useSelector(
     (state: RootState) => state.register
   );
+
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -33,6 +39,16 @@ const RegisterForm = () => {
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const password_pattern = /^.{8,}$/;
+    if (!password_pattern.test(e.target.value)) {
+      dispatch(
+        setPasswordErrorMessage(
+          "Password should be at least 8 characters long."
+        )
+      );
+    } else {
+      dispatch(setPasswordErrorMessage(""));
+    }
     dispatch(setPassword(e.target.value));
   };
 
@@ -48,29 +64,49 @@ const RegisterForm = () => {
     navigate("/user/sign_in");
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submit");
-    if (!username || !email || !password || !isAgree) {
-      setErrorMessage("Please fill in all fields");
-      return;
-    }
-    try {
-      // Perform API call to sign up with the backend
+    const userData = { username, email, password };
 
-      // Clear form inputs
-      dispatch(setUsername(""));
-      dispatch(setEmail(""));
-      dispatch(setPassword(""));
-      dispatch(setIsAgree(false));
-      setShowPassword(false);
-      setErrorMessage("");
+    const registerUser = async () => {
+      try {
+        // Perform API call to sign up with the backend
+        let response = await fetch(
+          "http://13.251.127.67:8080/api/v1/register-user",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(userData),
+          }
+        );
 
-      navigate("/community");
-    } catch (error) {
-      // Handle error response from the backend
-      setErrorMessage("Sign-up failed. Please try again.");
-    }
+        if (response.ok) {
+          response = await response.json();
+          localStorage.setItem("user-info", JSON.stringify(response));
+
+          // Clear form inputs
+          dispatch(setUsername(""));
+          dispatch(setEmail(""));
+          dispatch(setPassword(""));
+          dispatch(setIsAgree(false));
+          setShowPassword(false);
+          navigate("/auth/verification");
+        } else {
+          // Registration failed, handle the error
+          const errorData = await response.json();
+          console.log("Registration failed:", errorData);
+        }
+      } catch (error) {
+        // Handle error response from the backend
+        // setErrorMessage("Sign-up failed. Please try again.");
+        console.log("An error occurred:", error);
+      }
+    };
+
+    registerUser();
   };
 
   return (
@@ -97,6 +133,7 @@ const RegisterForm = () => {
             placeholder="Username"
             value={username}
             onChange={handleUsernameChange}
+            required
           />
           <input
             className="border text-gray-700 border-gray-300 rounded px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full mb-4"
@@ -104,6 +141,7 @@ const RegisterForm = () => {
             placeholder="Email"
             value={email}
             onChange={handleEmailChange}
+            required
           />
           <div className="flex relative mb-2">
             <input
@@ -112,6 +150,7 @@ const RegisterForm = () => {
               placeholder="Password"
               value={password}
               onChange={handlePasswordChange}
+              required
             />
             <button
               id="show_password"
@@ -125,10 +164,12 @@ const RegisterForm = () => {
               )}
             </button>
           </div>
+          {errorMessage.passwordMessage && (
+            <small className="text-red-500 mb-3">
+              {errorMessage.passwordMessage}
+            </small>
+          )}
           <div className="flex flex-col">
-            {errorMessage && (
-              <small className="text-red-500">{errorMessage}</small>
-            )}
             <div className="flex flex-row items-center text-sm">
               <input
                 type="checkbox"
@@ -163,18 +204,27 @@ const RegisterForm = () => {
           <span className="flex-grow border-t border-gray-300 mx-2"></span>
         </div>
         <div className="flex justify-center mt-4 space-x-4">
-          <button id="google">
+          <button id="facebook" type="button">
             <BsFacebook className="w-6 h-6 text-blue-600 hover:opacity-70" />
           </button>
-          <button id="github">
+          <button id="github" type="button">
             <FaGithub className="w-6 h-6 text-gray-800 hover:opacity-70" />
           </button>
-          <button id="twitter">
+          <button id="twitter" type="button">
             <FaTwitter className="text-blue-400 w-6 h-6 hover:opacity-70" />
           </button>
-          <button id="google">
+          <button id="google" type="button">
             <FcGoogle className="w-6 h-6 hover:opacity-70" />
           </button>
+
+          {/* <GoogleLogin
+            className="w-full flex justify-center"
+            buttonText="Sign up with Google"
+            clientId={clientId}
+            onSuccess={handleGoogleSuccess}
+            onFailure={handleGoogleFailure}
+            cookiePolicy={"single_host_origin"}
+          /> */}
         </div>
       </form>
     </div>
