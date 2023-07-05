@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { TiDelete } from "react-icons/ti";
 import { HiOutlineCamera } from "react-icons/hi";

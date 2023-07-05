@@ -1,9 +1,4 @@
 // Define state action
-interface FileMetadata {
-  name: string;
-  size: number;
-  type: string;
-}
 
 export interface User {
   id: number;

@@ -43,9 +43,9 @@ function Favorite({ searchQuery }: FavoriteProps) {
     { image: Ellipse1009, name: "Saturday Phirk" },
   ];
 
-  const filteredFavorites = favorites.filter((favorite) =>
-    favorite.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredFavorites = favorites.filter((favorite) =>
+  //   favorite.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   return (
     <div className="profile flex flex-col gap-y-4 ml-5 mr-5">

@@ -5,7 +5,6 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import pollifyLogo from "../../assets/PolliFy.png";
-import GoogleLogin from "react-google-login";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import {
@@ -15,9 +14,6 @@ import {
   setIsAgree,
   setPasswordErrorMessage,
 } from "../../redux/slices/RegisterForm";
-
-const clientId =
-  "169663001832-rnhhvl1ump4dj98k56gi44ejt8h5i0mn.apps.googleusercontent.com";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
