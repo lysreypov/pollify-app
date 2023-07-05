@@ -49,7 +49,7 @@ function Favorite({ searchQuery }: FavoriteProps) {
 
   return (
     <div className="profile flex flex-col gap-y-4 ml-5 mr-5">
-      {data?.map((community) => (
+      {data?.map((community: any) => (
         <div className="flex" key={community.id}>
           <img
             src={community.communityName}
