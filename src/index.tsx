@@ -8,9 +8,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 
 const queryClient = new QueryClient();
-
 const rootElement = document.getElementById("root");
-
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <Provider store={store}>

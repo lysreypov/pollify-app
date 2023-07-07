@@ -7,13 +7,13 @@ module.exports = {
         sans: ["Inter", "sans-serif"],
       },
       borderColor: {
-        "blue-custom": "#2d9cdb",
+        "blue-custom": "#2D9CDB",
       },
       backgroundColor: {
-        "blue-custom": "#2d9cdb",
+        "blue-custom": "#2D9CDB",
       },
       textColor: {
-        "blue-custom": "#2d9cdb",
+        "blue-custom": "#2D9CDB",
         "black-secondary": "#383A3D",
       },
       screens: {

@@ -1,6 +1,7 @@
 // Define state reducer
 import RegisterState, {
   UpdateRegisterAction,
+  ErrorMessage,
 } from "../../types/redux/register";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { TiDelete } from "react-icons/ti";
 import { HiOutlineCamera } from "react-icons/hi";
@@ -15,9 +16,7 @@ import {
   setInvitedUsers,
 } from "../../redux/slices/Community";
 import { User } from "../../types/redux/community";
-
-const token =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YW1hIiwiZXhwIjoxNjg4MTMzMTI2fQ.LV_PQ8BZ8qIWnvNIgZTWFXu5RToJRzspDMiiaTo-aV-rxo5YzroFq03hvKPEyXCt1LoZDJ90Ek5i1iTPSZphAw";
+import { apiURL, accessToken } from "../../config/config";
 
 function CreateCommunity() {
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ function CreateCommunity() {
     searchTerm,
     userData,
     invitedUsers,
-  } = useSelector((state: RootState) => state.createCommunity);
+  } = useSelector((state: RootState) => state.community);
 
   // style
   const height = invitedUsers.length !== 0 ? "h-20" : "h-auto";
@@ -62,14 +61,12 @@ function CreateCommunity() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://13.251.127.67:8080/api/v1/user/all",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${apiURL}/api/v1/user/all`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
         if (response.ok) {
           const userData = await response.json();
           const updatedData = userData.map(
@@ -104,6 +101,9 @@ function CreateCommunity() {
     if (!invitedUsers.some((invitedUser) => invitedUser.id === user.id)) {
       const updatedInvitedUsers = [...invitedUsers, user];
       dispatch(setInvitedUsers(updatedInvitedUsers));
+
+      // clear user input
+      dispatch(setSearchTerm(""));
     }
   };
 
@@ -129,18 +129,15 @@ function CreateCommunity() {
 
     const createCommunity = async () => {
       try {
-        const response = await fetch(
-          "http://13.251.127.67:8080/api/v1/community",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(communityData),
-          }
-        );
+        const response = await fetch(`${apiURL}/api/v1/community`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(communityData),
+        });
 
         if (response.ok) {
           console.log("Create Community Success");
@@ -223,6 +220,7 @@ function CreateCommunity() {
               className="text-gray-700 mt-2 py-2 px-4 w-full rounded border-2 border-neutral-300 focus:outline-none"
               type="email"
               placeholder="Type email..."
+              value={searchTerm}
               onChange={(e) => dispatch(setSearchTerm(e.target.value))}
             />
           </div>
@@ -235,7 +233,7 @@ function CreateCommunity() {
               {invitedUsers.map((user, index) => {
                 return (
                   <React.Fragment key={index}>
-                    <div className="flex flex-row items-center pl-1 h-9 space-x-2 w-auto border border-blue-custom rounded-full">
+                    <div className="flex flex-row items-center pl-1 h-8 space-x-2 w-auto border border-blue-custom rounded-full">
                       <img className="w-6 h-6" src={avatar2} alt="" />
                       <p className="text-sm text-blue-custom">
                         {user.username}

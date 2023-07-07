@@ -24,7 +24,7 @@ function CommunityProfile() {
   };
 
   return (
-    <div className="cotainer flex flex-col gap-y-5 font-sans bg-white lg:w-2/6 h-full mr-5">
+    <div className="font-sans bg-white lg:w-2/6 h-full hidden lg:flex lg:flex-col lg:gap-y-5">
       <div className="logo-profile-createPoll flex justify-between lg:justify-end items-center mt-5 ml-5 mr-5">
         <img
           src={PolliFy}
@@ -39,9 +39,9 @@ function CommunityProfile() {
             <img
               src={Avatar}
               alt="Profile 1"
-              className="w-8 h-8 rounded-full mr-2 border-2 border-blue-500"
+              className="w-10 h-10 rounded-full mr-2 border-2 border-blue-500"
             />
-            <span className="bottom-0 left-7 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+            <span className="bottom-1 left-8 absolute w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@ function CommunityProfile() {
       <PopupModal isOpen={isOpen} onClose={closeModal} />
       <div className="line border border-gray-100 ml-5 mr-5"></div>
       <Notifications />
-      <CommunityMembers />
+      {/* <CommunityMembers /> */}
     </div>
   );
 }

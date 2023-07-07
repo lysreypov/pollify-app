@@ -10,6 +10,7 @@ import {
   setIsValid,
   setErrorMessage,
 } from "../../redux/slices/Otp";
+import { apiURL } from "../../config/config";
 
 let currentOtpIndex = 0;
 const result = true;
@@ -50,13 +51,42 @@ const OtpVerification = () => {
     console.log("Resend Code");
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Verifying", otpCodes);
-    if (result) dispatch(setIsValid(true));
-    else dispatch(setErrorMessage("Verification code is invalid."));
+    const dataString = localStorage.getItem("user-info");
+    const data = dataString ? JSON.parse(dataString) : {};
 
-    navigate("/community");
+    const code = otpCodes.join("");
+    const username = data.username;
+    const verifyData = { username, code };
+
+    try {
+      // Perform API call to sign up with the backend
+      const response = await fetch(`${apiURL}/api/v1/verify-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(verifyData),
+      });
+
+      if (response.ok) {
+        dispatch(setIsValid(true));
+
+        // Clear form inputs
+        dispatch(setOtpCodes(["", "", "", ""]));
+        navigate("/user/sign_in");
+      } else {
+        // Verification failed, handle the error
+        dispatch(setErrorMessage("Verification code is invalid."));
+        const errorData = await response.json();
+        console.log("Verification failed:", errorData);
+      }
+    } catch (error) {
+      // Handle error response from the backend
+      console.log("An error occurred:", error);
+    }
   };
 
   return (
@@ -87,6 +117,7 @@ const OtpVerification = () => {
                   onChange={handleOptOnChange}
                   onKeyDown={(e) => handleOnKeyDown(e, index)}
                   value={otpCodes[index]}
+                  required
                 />
               </React.Fragment>
             );

@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { BsFacebook } from "react-icons/bs";
-import { FaGithub, FaTwitter } from "react-icons/fa";
 import pollifyLogo from "../../assets/PolliFy.png";
+import GoogleLogin, {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
+import { gapi } from "gapi-script";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import {
@@ -14,16 +17,14 @@ import {
   setIsAgree,
   setPasswordErrorMessage,
 } from "../../redux/slices/RegisterForm";
+import { apiURL, clientId } from "../../config/config";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
   const { username, email, password, isAgree, errorMessage } = useSelector(
     (state: RootState) => state.register
   );
-
   const [showPassword, setShowPassword] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState("");
-
   const navigate = useNavigate();
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,48 +61,65 @@ const RegisterForm = () => {
     navigate("/user/sign_in");
   };
 
+  // Sign up via gmail
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: "",
+      });
+    }
+
+    gapi.load("client:auth2", start);
+  });
+
+  const handleGoogleSuccess = (
+    response: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    console.log("Google Sign up Success", response);
+  };
+
+  const handleGoogleFailure = (error: any) => {
+    console.log("Google Sign up Fail", error);
+  };
+
+  const registerUser = async () => {
+    const userData = { username, email, password };
+    try {
+      // Perform API call to sign up with the backend
+      let response = await fetch(`${apiURL}/api/v1/register-user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        response = await response.json();
+        localStorage.setItem("user-info", JSON.stringify(response));
+
+        // Clear form inputs
+        dispatch(setUsername(""));
+        dispatch(setEmail(""));
+        dispatch(setPassword(""));
+        dispatch(setIsAgree(false));
+        setShowPassword(false);
+        navigate("/auth/verification");
+      } else {
+        // Registration failed, handle the error
+        const errorData = await response.json();
+        console.log("Registration failed:", errorData);
+      }
+    } catch (error) {
+      // Handle error response from the backend
+      console.log("An error occurred:", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const userData = { username, email, password };
-
-    const registerUser = async () => {
-      try {
-        // Perform API call to sign up with the backend
-        let response = await fetch(
-          "http://13.251.127.67:8080/api/v1/register-user",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify(userData),
-          }
-        );
-
-        if (response.ok) {
-          response = await response.json();
-          localStorage.setItem("user-info", JSON.stringify(response));
-
-          // Clear form inputs
-          dispatch(setUsername(""));
-          dispatch(setEmail(""));
-          dispatch(setPassword(""));
-          dispatch(setIsAgree(false));
-          setShowPassword(false);
-          navigate("/auth/verification");
-        } else {
-          // Registration failed, handle the error
-          const errorData = await response.json();
-          console.log("Registration failed:", errorData);
-        }
-      } catch (error) {
-        // Handle error response from the backend
-        // setErrorMessage("Sign-up failed. Please try again.");
-        console.log("An error occurred:", error);
-      }
-    };
-
     registerUser();
   };
 
@@ -195,12 +213,12 @@ const RegisterForm = () => {
           </span>
         </div>
         <div className="flex items-center justify-center mt-2">
-          <span className="flex-grow border-t border-gray-300 mx-2"></span>
+          <span className="flex-grow border-t border-gray-300"></span>
           <p className="text-gray-400">or</p>
-          <span className="flex-grow border-t border-gray-300 mx-2"></span>
+          <span className="flex-grow border-t border-gray-300"></span>
         </div>
         <div className="flex justify-center mt-4 space-x-4">
-          <button id="facebook" type="button">
+          {/* <button id="facebook" type="button">
             <BsFacebook className="w-6 h-6 text-blue-600 hover:opacity-70" />
           </button>
           <button id="github" type="button">
@@ -211,16 +229,27 @@ const RegisterForm = () => {
           </button>
           <button id="google" type="button">
             <FcGoogle className="w-6 h-6 hover:opacity-70" />
-          </button>
+          </button> */}
 
-          {/* <GoogleLogin
+          <GoogleLogin
             className="w-full flex justify-center"
-            buttonText="Sign up with Google"
             clientId={clientId}
             onSuccess={handleGoogleSuccess}
             onFailure={handleGoogleFailure}
             cookiePolicy={"single_host_origin"}
-          /> */}
+            // uxMode="redirect"
+            isSignedIn={false}
+            render={(renderProps: any) => (
+              <button
+                className="flex border w-full justify-center items-center rounded py-3 gap-2 border-gray-300 hover:bg-gray-200 hover:border-gray-500"
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+              >
+                <FcGoogle className="w-5 h-5" />
+                <span className="text-sm">Sign up with Google</span>
+              </button>
+            )}
+          />
         </div>
       </form>
     </div>

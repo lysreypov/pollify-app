@@ -1,33 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Avatar from "../../../assets/Avatar.png";
 import { MdTranslate } from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { AiFillTrophy } from "react-icons/ai";
+import { AiOutlineSearch } from "react-icons/ai";
 import Poll1 from "./Poll1";
 import Poll2 from "./Poll2";
 import SelectFood from "./SelectFood";
 import Rating from "./Rating";
-
 import { RootState } from "../../../redux/store";
 import { useNavigate } from "react-router-dom";
 import CreatePollPopup from "../../popup/CreatePollPopup";
 import { useDispatch, useSelector } from "react-redux";
 import { openCreatePollPopup } from "../../../redux/slices/CreatePoll";
 import { useQuery } from "react-query";
-
-const trophyIcons = {
-  color: "blue",
-  opacity: 0.7,
-  fontSize: "50px",
-};
-
-const API_URL = "http://13.251.127.67:8080/api/v1/poll/community/1";
+import { apiURL, accessToken } from "../../../config/config";
+import PolliFy from "../../../assets/PolliFy.png";
+import { NoPoll } from "../../../homepage";
+import TrophyIcon from "../../../assets/icons/trophy.svg";
+import { setPollInCommunity } from "../../../redux/slices/Community";
+import { useParams } from "react-router-dom";
 
 function CreatePoll() {
   const dispatch = useDispatch();
   const isCreatePollPopupOpen = useSelector(
     (state: RootState) => state.createPoll.isCreatePollPopupOpen
   );
+  const { inCommunityId, pollInCommunity } = useSelector(
+    (state: RootState) => state.community
+  );
+  const { username } = useSelector((state: RootState) => state.userCommunity);
+  const { community } = useSelector((state: RootState) => state.userCommunity);
 
   const navigate = useNavigate();
   const handleClick = () => {
@@ -39,38 +41,46 @@ function CreatePoll() {
     dispatch(openCreatePollPopup());
   };
 
-  const { isLoading, error, data } = useQuery("pollData", async () => {
-    const response = await fetch(API_URL, {
-      headers: {
-        Authorization:
-          "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YW1hIiwiZXhwIjoxNjg4MTg5Mzg0fQ.sFseVTDLYz6W5PD2NGjDatXD12i92fjoXjCcRKo6IR1uvLaOOWM0gFb2HmyOvn-kUc4Tk2wVIazeVZbhv-FH7w",
-      },
-    });
+  useEffect(() => {
+    if (inCommunityId !== 0) {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+            `${apiURL}/api/v1/poll/community/${inCommunityId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch poll data");
+          if (response.ok) {
+            const communityPollData = await response.json();
+            dispatch(setPollInCommunity(communityPollData.length));
+          }
+        } catch (error) {
+          console.error("An error occurred: ", error);
+        }
+      };
+      fetchData();
     }
-
-    return response.json();
-  });
-  console.log("data", data);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.toString()}</div>;
-  }
+  }, [inCommunityId]);
 
   return (
-    <div className="container flex flex-col bg-slate-200 gap-y-5 w-screen h-auto font-sans">
-      <div className="bg-white flex flex-col gap-y-8">
-        <div className="logo-profile-createPoll flex justify-between items-center mt-5 ml-5 mr-5">
-          <p className="whitespace-normal font-sans">
-            Welcome to the PitCool bro{" "}
-            <span className="text-blue-custom font-bold">TED </span>!
-          </p>
+    <div className="bg-gray-100 w-full lg:w-full md:w-screen sm:w-full font-san h-screen">
+      <div className="bg-white flex flex-col pl-6 pr-7 py-6 gap-y-7">
+        <div className="logo-profile-createPoll flex justify-between items-center">
+          <div className="logo-text">
+            <p className="whitespace-normal text-lg hidden text-gray-700 lg:block">
+              Welcome to the PitCool bro
+              <span className="text-blue-custom font-bold uppercase">
+                {" "}
+                {username}{" "}
+              </span>
+              !
+            </p>
+            <img src={PolliFy} alt="pollify" className="w-fit h-7 lg:hidden" />
+          </div>
           <div className="translate flex gap-x-3 items-center lg:hidden">
             <MdTranslate className="w-6 h-6" />
             <IoMdNotificationsOutline className="w-6 h-6" />
@@ -78,63 +88,51 @@ function CreatePoll() {
               <img
                 src={Avatar}
                 alt="Profile 1"
-                className="w-8 h-8 rounded-full mr-2 border-2 border-blue-500"
+                className="w-10 h-10 rounded-full mr-2 border-2 border-blue-500"
               />
-              <span className="bottom-0 left-7 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
+              <span className="bottom-1 left-8 absolute  w-3 h-3 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
             </div>
           </div>
         </div>
-        <div className="create-poll w-full flex flex-row justify-around items-center gap-x-2 mb-5">
-          <div className="search-field relative w-11/12 ml-5 flex">
+        <div className="create-poll w-full flex flex-row justify-around items-center gap-x-3">
+          <div className="search-field relative w-11/12 flex">
             <div className="w-full absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg
-                aria-hidden="true"
-                className="w-5 h-5 text-gray-500 dark:text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
+              <AiOutlineSearch className="text-gray-400 w-5 h-5" />
             </div>
             <input
               type="text"
-              placeholder="Search community"
-              className="py-2 px-4 pl-8 border-2 b border-gray-300 w-full rounded-full focus:outline-none focus:border-blue-500"
+              placeholder="Search Poll"
+              className="py-2 px-4 pl-9 border-2 border-gray-300 w-full rounded-full focus:outline-none focus:border-blue-500"
             />
           </div>
 
           <button
             onClick={handleCreatePoll}
-            className="bg-blue-500 hover:bg-blue-700 text-white whitespace-nowrap rounded-full px-4 py-2"
+            className="bg-blue-custom hover:opacity-70 text-white whitespace-nowrap rounded-full px-4 py-2.5"
+            disabled={community.length === 0}
           >
             Create Poll
           </button>
-          <AiFillTrophy
-            className="mr-5 border-2 border-blue-500 rounded-full p-1"
-            style={trophyIcons}
-          />
+          <div className="flex justify-center items-center border border-blue-custom rounded-full w-14 h-12">
+            <img className="w-8 h-8" src={TrophyIcon} alt="Trophy" />
+          </div>
         </div>
         {isCreatePollPopupOpen && <CreatePollPopup />}
       </div>
-      {data && data.length > 0 ? (
-        <div>
-          <Poll1 />
-          <Poll2 />
-          <SelectFood />
-          <Rating />
-        </div>
-      ) : (
-        <div className="flex justify-center items-center">
-          There is currently no poll within your community
-        </div>
-      )}
+      <div className="flex flex-col gap-y-5 h-[87%] lg:h-[85%] overflow-auto p-6 home-scrolling">
+        {pollInCommunity && pollInCommunity > 0 ? (
+          <div className="flex flex-col gap-y-5">
+            {" "}
+            <Poll1 />
+            <Poll1 />
+            <Poll2 />
+            <SelectFood />
+            <Rating />
+          </div>
+        ) : (
+          <NoPoll />
+        )}
+      </div>
     </div>
   );
 }

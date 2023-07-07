@@ -10,7 +10,7 @@ const selectFoodIcons = {
 
 function SelectFood() {
   return (
-    <div className="select-food flex flex-col ml-5 mr-5 border h-fit bg-white rounded-md">
+    <div className="select-food flex flex-col border h-fit bg-white rounded-md">
       <div className="userChart flex justify-between items-center">
         <div className="User flex mt-5 ml-5 relative">
           <img
@@ -30,7 +30,7 @@ function SelectFood() {
         here is the new menus for this lunch. <br />
         Please vote for 3 food options.
       </p>
-      <div className="foodSelected grid md:grid-cols-2 grid-rows-4 md:grid-rows-2 gap-4 mt-5 ml-5 mr-5">
+      <div className="foodSelected grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mt-5 ml-5 mr-5 text-gray-800">
         <div className="border border-neutral-300 px-5 py-3 flex bg-white items-center gap-x-2 rounded-xl shadow">
           <div className="radio w-4 h-4 border border-gray-300 rounded-full"></div>
           <h1 className="font-bold font-sans text-[15px]">BBQ</h1>
@@ -53,7 +53,7 @@ function SelectFood() {
           <h1 className="md:text-[17px]">Please Vote</h1>
           <h1 className="text-sky-500 font-bold md:text-[17px]">2/3</h1>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-3 mb-4 dark:bg-gray-100">
+        <div className="w-full bg-gray-100 rounded-full h-2 mb-4 dark:bg-gray-100">
           <div className="w-2/6 bg-sky-500 h-full rounded-full dark:bg-blue-500"></div>
         </div>
       </div>

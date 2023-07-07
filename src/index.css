@@ -16,12 +16,6 @@ body {
   }
 }
 
-/* .custom-line {
-  height: 0.05rem;
-  width: 50%;
-  background-color: #a0aec0;
-} */
-
 /* remove scrollbar */
 *::-webkit-scrollbar {
   width: 0;
@@ -30,14 +24,28 @@ body {
 /* users section scrollbar */
 .home-scrolling::-webkit-scrollbar {
   margin-top: 10px;
-  width: 10px;
-  height: 10px;
-  background-color: #f5f5f5;
+  width: 8px;
+  /* height: 5px; */
+  /* background-color: #f5f5f5; */
   border-radius: 10px;
 }
 
 .home-scrolling::-webkit-scrollbar-thumb {
-  background-color: #c4c4c4;
+  background-color: #afafaf;
+  width: 2px;
+  border-radius: 10px;
+}
+
+.community-scrolling::-webkit-scrollbar {
+  margin-top: 10px;
+  width: 5px;
+  /* height: 5px; */
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+.community-scrolling::-webkit-scrollbar-thumb {
+  background-color: #afafaf;
   width: 2px;
   border-radius: 10px;
 }

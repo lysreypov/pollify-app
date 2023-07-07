@@ -2,7 +2,7 @@ import React from "react";
 import { FiSettings } from "react-icons/fi";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineGroups } from "react-icons/md";
-import { CgToggleOff } from "react-icons/cg";
+import { CgToggleOff, CgToggleOn } from "react-icons/cg";
 import AddPermission from "../../popup/AddPermission";
 
 const notificationICons = {
@@ -16,6 +16,11 @@ function Notifications() {
   };
   const closeModal = () => {
     setIsOpen(false);
+  };
+
+  const [isToggleOpen, setIsToggleOpen] = React.useState(false);
+  const handleToggle = () => {
+    setIsToggleOpen((prevState) => !prevState);
   };
 
   return (
@@ -32,7 +37,17 @@ function Notifications() {
           />
           <h1>Notification</h1>
         </div>
-        <CgToggleOff className="w-7 h-7" style={notificationICons} />
+        <div
+          className="toggle-btn"
+          onClick={handleToggle}
+          style={notificationICons}
+        >
+          {isToggleOpen ? (
+            <CgToggleOn color="blue" className="w-6 h-fit" />
+          ) : (
+            <CgToggleOff className="w-6 h-fit" />
+          )}
+        </div>
       </div>
       <div
         className="flex justify-start items-center ml-5 gap-x-5 cursor-pointer"

@@ -3,7 +3,7 @@ import OtpState, { UpdateOtpAction } from "../../types/redux/otp";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: OtpState = {
-  otpCodes: ["", "", "", "", "", ""],
+  otpCodes: ["", "", "", ""],
   activeOtpIndex: 0,
   isValid: false,
   errorMessage: "",
