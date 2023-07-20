@@ -8,7 +8,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { LuWrapText } from "react-icons/lu";
 import { RootState } from "../../redux/store";
 import { RxCrossCircled } from "react-icons/rx";
-import Dropdown from "react-dropdown-select";
+// import Dropdown from "react-dropdown-select";
 import api from "../../utils/api";
 
 const CreatePollPopup = () => {
