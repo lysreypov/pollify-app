@@ -1,16 +1,34 @@
 import React, { useState } from "react";
 import MainLogo from "../../assets/images/pollify_logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
+import GoogleLogin, {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
+import { clientId } from "../../config/config";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import { BsFacebook } from "react-icons/bs";
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthState, setAccessToken } from "../../redux/slices/Auth";
+import api from "../../utils/api";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const isRedirected = window.location.search.includes("redirect");
+  let inviteToken = "";
+  if (isRedirected) {
+    inviteToken = window.location.search.split("=")[1];
+  }
+
+  // Handling login
+  const dispatch = useDispatch();
+  // const accessToken = useSelector((state: any) => state.auth.accessToken);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -20,21 +38,45 @@ const LoginForm = () => {
     setPassword(event.target.value);
   };
 
-  const handleSignUpInstead = () => {
-    navigate("/user/sign_up");
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email || !password) {
       return;
     }
+    const data = {
+      username: email,
+      password: password,
+    };
 
     try {
-      navigate("/community");
+      const response = await api.post("/auth/login", data);
+
+      if (response.status === 200) {
+        const { token } = response.data;
+
+        dispatch(setAccessToken(token));
+        localStorage.setItem("accessToken", `${token}`);
+
+        if (isRedirected) {
+          navigate(`/community/invite/${inviteToken}`);
+        } else {
+          navigate("/community");
+        }
+      }
     } catch (error) {
-      console.log("cannot log in");
+      alert("Can not login");
+      console.log("cannot log in", error);
     }
+  };
+
+  const handleGoogleSuccess = (
+    response: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    console.log("Google Sign up Success", response);
+  };
+
+  const handleGoogleFailure = (error: any) => {
+    console.log("Google Sign up Fail", error);
   };
 
   const handleShowPassword = () => {
@@ -51,15 +93,15 @@ const LoginForm = () => {
           <img src={MainLogo} alt="Pollify logo" />
         </div>
         <div className="pb-5">
-          <h2 className="text-lg font-bold">Welcome To Materio!👋🏻</h2>
-          <small>Please register your account and start the adventure</small>
+          <h2 className="text-lg font-bold">Welcome To Pollify!👋🏻</h2>
+          <small>Please log in to your account and start the adventure</small>
         </div>
         <div>
           <input
             className="border text-gray-700 border-gray-300 rounded px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full mb-4"
             id="email"
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Username"
             value={email}
             onChange={handleEmailChange}
           />
@@ -94,12 +136,12 @@ const LoginForm = () => {
           <label className="text-sm" htmlFor="rememberMe">
             Remember me
           </label>
-          <a
-            className="ml-auto text-sm text-[#2D9CDB] hover:opacity-80"
-            href="#forgot"
+          <Link
+            to="/user/forgot_password"
+            className="text-blue-custom ml-auto text-sm hover:opacity-80"
           >
             Forgot password?
-          </a>
+          </Link>
         </div>
         <div className="flex items-center justify-between">
           <button
@@ -112,9 +154,12 @@ const LoginForm = () => {
         <div className="flex items-center justify-center py-2 mt-3">
           <p className="pr-3 font-light text-sm">New on our platform?</p>
           <Link
-            to="/user/sign_up"
+            to={
+              isRedirected
+                ? `/user/sign_up?redirect=${inviteToken}`
+                : "/user/sign_up"
+            }
             className="inline-block align-baseline font-bold text-sm text-[#2D9CDB] hover:opacity-70"
-            onClick={handleSignUpInstead}
           >
             Create an account
           </Link>
@@ -125,7 +170,7 @@ const LoginForm = () => {
           <span className="flex-grow border-t border-gray-300 mx-2"></span>
         </div>
         <div className="flex items-center justify-center space-x-5 pt-4">
-          <span>
+          {/* <span>
             <BsFacebook className="text-blue-600 w-6 h-6 hover:opacity-70" />
           </span>
           <span>
@@ -136,7 +181,26 @@ const LoginForm = () => {
           </span>
           <span>
             <FcGoogle className="w-6 h-6 hover:opacity-70" />
-          </span>
+          </span> */}
+          <GoogleLogin
+            className="w-full flex justify-center"
+            clientId={clientId}
+            onSuccess={handleGoogleSuccess}
+            onFailure={handleGoogleFailure}
+            cookiePolicy={"single_host_origin"}
+            // uxMode="redirect"
+            isSignedIn={false}
+            render={(renderProps: any) => (
+              <button
+                className="flex border w-full justify-center items-center rounded py-3 gap-2 border-gray-300 hover:bg-gray-200 hover:border-gray-500"
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+              >
+                <FcGoogle className="w-5 h-5" />
+                <span className="text-sm">Sign in with Google</span>
+              </button>
+            )}
+          />
         </div>
       </form>
     </div>

@@ -5,9 +5,11 @@ import communityReducer from "./slices/Community";
 import CreatePollReducer from "./slices/CreatePoll";
 import otpReducer from "./slices/Otp";
 import userCommunityReducer from "./slices/UserCommunity";
+import Auth from "./slices/Auth";
 
 const store = configureStore({
   reducer: {
+    auth: Auth,
     register: registerReducer,
     community: communityReducer,
     userCommunity: userCommunityReducer,

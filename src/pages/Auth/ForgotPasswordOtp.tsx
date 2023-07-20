@@ -10,34 +10,23 @@ import {
   setIsValid,
   setErrorMessage,
 } from "../../redux/slices/Otp";
-import {
-  setUsername,
-  setEmail,
-  setPassword,
-  setIsAgree,
-} from "../../redux/slices/RegisterForm";
+import { setEmail } from "../../redux/slices/Auth";
 import { apiURL } from "../../config/config";
+import api from "../../utils/api";
 
 let currentOtpIndex = 0;
 const result = true;
 
-const OtpVerification = () => {
+const ForgotPasswordOtp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { otpCodes, activeOtpIndex, isValid, errorMessage } = useSelector(
     (state: RootState) => state.otp
   );
 
-  const { username } = useSelector((state: RootState) => state.register);
+  const { email } = useSelector((state: RootState) => state.auth);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Handling invitation
-  const isRedirected = window.location.search.includes("redirect");
-  let inviteToken = "";
-  if (isRedirected) {
-    inviteToken = window.location.search.split("=")[1];
-  }
 
   const handleOptOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const value = e.target.value;
@@ -68,46 +57,33 @@ const OtpVerification = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const code = parseInt(otpCodes.join(""));
-    const verifyData = { username, code };
-    console.log(verifyData);
+
+    const code = otpCodes.join("");
+    const verifyData = { email: email, code: code };
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = {
+      Authorization: `${accessToken}`,
+    };
 
     try {
-      // Perform API call to sign up with the backend
-      const response = await fetch(`${apiURL}/verify-user`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(verifyData),
+      const response = await api.post(`/verify-forgot-password`, verifyData, {
+        headers,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem("forgotpassword-accesstoken", token);
         dispatch(setIsValid(true));
 
-        // Clear form inputs
+        // clear form input
         dispatch(setOtpCodes(["", "", "", ""]));
         dispatch(setErrorMessage(""));
-        // Register Form
-        dispatch(setUsername(""));
-        dispatch(setEmail(""));
-        dispatch(setPassword(""));
-        dispatch(setIsAgree(false));
-        if (isRedirected) {
-          navigate(`/user/sign_in?redirect=${inviteToken}`);
-        } else {
-          navigate("/user/sign_in");
-        }
-      } else {
-        // Verification failed, handle the error
-        dispatch(setErrorMessage("Verification code is invalid."));
-        const errorData = await response.json();
-        console.log("Verification failed:", errorData);
+
+        navigate("/user/reset_password");
       }
     } catch (error) {
-      // Handle error response from the backend
-      console.log("An error occurred:", error);
+      dispatch(setErrorMessage("Verification code is invalid."));
+      console.log("An error occurred: ", error);
     }
   };
 
@@ -168,4 +144,4 @@ const OtpVerification = () => {
   );
 };
 
-export default OtpVerification;
+export default ForgotPasswordOtp;

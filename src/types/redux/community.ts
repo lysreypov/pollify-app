@@ -1,27 +1,24 @@
 // Define state action
-// interface FileMetadata {
-//   name: string;
-//   size: number;
-//   type: string;
-// }
 
 export interface User {
   id: number;
   username: string;
   email: string;
+  role: string;
 }
 
 interface CommunitySate {
-  userProfile: File | null;
-  inCommunityId: number;
   userCommunity: number;
-  pollInCommunity: number;
   communityName: string;
+  inCommunityId: number;
   searchTerm: string;
-  communityDescription: string;
   isCreateCommunityOpen: boolean;
+  isBackToCommunity: boolean;
+  isCommunityProfileOpen: boolean;
   userData: User[];
   invitedUsers: User[];
+  communityMembers: User[];
+  isOpenUserProfileMobile: boolean;
 }
 
 const UpdateCommunityAction = "Community";

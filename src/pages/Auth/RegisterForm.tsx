@@ -18,6 +18,7 @@ import {
   setPasswordErrorMessage,
 } from "../../redux/slices/RegisterForm";
 import { apiURL, clientId } from "../../config/config";
+import Alert from "../../components/Popup/Alert";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,20 @@ const RegisterForm = () => {
   );
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  // Handling error with alert box
+  const [message, setMessage] = useState<string>("");
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">(
+    "success"
+  );
+
+  // Handling invitation logic
+  const isRedirected = window.location.search.includes("redirect");
+  let inviteToken = "";
+  if (isRedirected) {
+    inviteToken = window.location.search.split("=")[1];
+  }
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setUsername(e.target.value));
@@ -57,10 +72,6 @@ const RegisterForm = () => {
     dispatch(setIsAgree(!isAgree));
   };
 
-  const handleSignInInstead = () => {
-    navigate("/user/sign_in");
-  };
-
   // Sign up via gmail
   useEffect(() => {
     function start() {
@@ -87,7 +98,7 @@ const RegisterForm = () => {
     const userData = { username, email, password };
     try {
       // Perform API call to sign up with the backend
-      let response = await fetch(`${apiURL}/api/v1/register-user`, {
+      let response = await fetch(`${apiURL}/register-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,19 +112,27 @@ const RegisterForm = () => {
         localStorage.setItem("user-info", JSON.stringify(response));
 
         // Clear form inputs
-        dispatch(setUsername(""));
-        dispatch(setEmail(""));
-        dispatch(setPassword(""));
-        dispatch(setIsAgree(false));
         setShowPassword(false);
-        navigate("/auth/verification");
+        if (isRedirected) {
+          navigate(`/auth/verification?redirect=${inviteToken}`);
+        } else {
+          navigate("/auth/verification");
+        }
       } else {
         // Registration failed, handle the error
         const errorData = await response.json();
-        console.log("Registration failed:", errorData);
+        console.log("Registration failed:", errorData.message);
+        setAlertType("error");
+        setShowAlert(true);
+        setMessage(`${errorData.message}`);
+        setTimeout(function () {
+          setShowAlert(false);
+          setMessage("");
+        }, 4000);
       }
     } catch (error) {
       // Handle error response from the backend
+
       console.log("An error occurred:", error);
     }
   };
@@ -125,6 +144,7 @@ const RegisterForm = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
+      <Alert variant={alertType} message={message} showAlert={showAlert} />
       <form
         action=""
         onSubmit={handleSubmit}
@@ -136,7 +156,7 @@ const RegisterForm = () => {
             src={pollifyLogo}
             alt="Pollify Logo"
           />
-          <h1 className="text-lg font-bold">Welcome to Materio!👋🏻</h1>
+          <h1 className="text-lg font-bold">Welcome to Pollify!👋🏻</h1>
           <small>Please register your account and start the adventure</small>
         </div>
         <div className="flex justify-center flex-col">
@@ -206,7 +226,6 @@ const RegisterForm = () => {
             <Link
               to="/user/sign_in"
               className="text-blue-custom font-bold hover:opacity-70"
-              onClick={handleSignInInstead}
             >
               Sign in instead
             </Link>

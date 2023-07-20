@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  UserCommunitySate,
+  UserCommunityState,
   UpdateUserCommunityAction,
 } from "../../types/redux/user_community";
 
-const initialState: UserCommunitySate = {
+const initialState: UserCommunityState = {
   id: 0,
   community: [],
   email: "",
@@ -15,7 +15,7 @@ export const userCommunitySlice = createSlice({
   name: UpdateUserCommunityAction,
   initialState: initialState,
   reducers: {
-    setUserCommunity: (state, action: PayloadAction<UserCommunitySate>) => {
+    setUserCommunity: (state, action: PayloadAction<UserCommunityState>) => {
       return {
         ...state,
         ...action.payload,

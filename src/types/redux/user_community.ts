@@ -1,10 +1,16 @@
 export interface Community {
   id: number;
   name: string;
-  description: string;
+  image: string;
 }
 
-export interface UserCommunitySate {
+export interface communityMember {
+  id: number;
+  email: string;
+  username: string;
+}
+
+export interface UserCommunityState {
   id: number;
   community: Community[];
   email: string;
@@ -13,5 +19,5 @@ export interface UserCommunitySate {
 
 const UpdateUserCommunityAction = "User Community";
 
-export default UserCommunitySate;
+export default UserCommunityState;
 export { UpdateUserCommunityAction };

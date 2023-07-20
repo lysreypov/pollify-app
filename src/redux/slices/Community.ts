@@ -6,33 +6,28 @@ import CommunityState, {
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: CommunityState = {
-  userProfile: null,
-  inCommunityId: 0,
   userCommunity: 0,
-  pollInCommunity: 0,
   communityName: "",
+  inCommunityId: 0,
   searchTerm: "",
-  communityDescription: "Description",
   isCreateCommunityOpen: false,
+  isBackToCommunity: false,
+  isCommunityProfileOpen: false,
   userData: [],
   invitedUsers: [],
+  communityMembers: [],
+  isOpenUserProfileMobile: false,
 };
 
 export const communitySlice = createSlice({
   name: UpdateCommunityAction,
   initialState: initialState,
   reducers: {
-    setUserProfile: (state, action: PayloadAction<File | null>) => {
-      state.userProfile = action.payload;
-    },
-    setInCommunityId: (state, action: PayloadAction<number>) => {
-      state.inCommunityId = action.payload;
-    },
     setUserCommunity: (state, action: PayloadAction<number>) => {
       state.userCommunity = action.payload;
     },
-    setPollInCommunity: (state, action: PayloadAction<number>) => {
-      state.pollInCommunity = action.payload;
+    setInCommunityId: (state, action: PayloadAction<number>) => {
+      state.inCommunityId = action.payload;
     },
     setCommunityName: (state, action: PayloadAction<string>) => {
       state.communityName = action.payload;
@@ -46,27 +41,41 @@ export const communitySlice = createSlice({
     closeCreateCommunity: (state) => {
       state.isCreateCommunityOpen = false;
     },
+    setIsBackToCommunity: (state, action: PayloadAction<boolean>) => {
+      state.isBackToCommunity = action.payload;
+    },
+    setIsCommunityProfileOpen: (state, action: PayloadAction<boolean>) => {
+      state.isCommunityProfileOpen = action.payload;
+    },
     setUserData: (state, action: PayloadAction<User[]>) => {
       state.userData = action.payload;
     },
     setInvitedUsers: (state, action: PayloadAction<User[]>) => {
       state.invitedUsers = action.payload;
     },
+    setCommunityMembers: (state, action: PayloadAction<User[]>) => {
+      state.communityMembers = action.payload;
+    },
+    setIsOpenUserProfileMobile: (state) => {
+      state.isOpenUserProfileMobile = !state.isOpenUserProfileMobile;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {
-  setUserProfile,
-  setInCommunityId,
   setUserCommunity,
-  setPollInCommunity,
   setCommunityName,
+  setInCommunityId,
   setSearchTerm,
   openCreateCommunity,
   closeCreateCommunity,
+  setIsBackToCommunity,
+  setIsCommunityProfileOpen,
   setUserData,
   setInvitedUsers,
+  setCommunityMembers,
+  setIsOpenUserProfileMobile,
 } = communitySlice.actions;
 
 export default communitySlice.reducer;
