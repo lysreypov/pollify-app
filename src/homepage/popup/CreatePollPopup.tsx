@@ -8,7 +8,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { LuWrapText } from "react-icons/lu";
 import { RootState } from "../../redux/store";
 import { RxCrossCircled } from "react-icons/rx";
-// import Dropdown from "react-dropdown-select";
+import Dropdown from "react-dropdown-select";
 import api from "../../utils/api";
 
 const CreatePollPopup = () => {
@@ -171,7 +171,7 @@ const CreatePollPopup = () => {
   };
 
   return (
-    <div className="h-screen relative lg:fixed z-20 lg:inset-0 overflow-y-auto flex lg:items-center lg:justify-center">
+    <div className="h-screen fixed z-20 inset-0 overflow-y-auto flex lg:items-center lg:justify-center">
       {/* <div className="logo-profile-createPoll flex justify-between items-center mt-5 ml-5 mr-5 md:hidden lg:hidden lg:justify-end">
         <div>
           <img src={PolliFy} alt='Profile 1' className='logo w-fit h-7' />

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import MainLogo from "../../assets/images/pollify_logo.png";
 import { Link, redirect, useNavigate } from "react-router-dom";
-// import GoogleLogin, {
-//   GoogleLoginResponse,
-//   GoogleLoginResponseOffline,
-// } from "react-google-login";
+import GoogleLogin, {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
 import { clientId } from "../../config/config";
 import { FaGithub, FaTwitter } from "react-icons/fa";
 import { BsFacebook } from "react-icons/bs";
@@ -69,15 +69,15 @@ const LoginForm = () => {
     }
   };
 
-  // const handleGoogleSuccess = (
-  //   response: GoogleLoginResponse | GoogleLoginResponseOffline
-  // ) => {
-  //   console.log("Google Sign up Success", response);
-  // };
+  const handleGoogleSuccess = (
+    response: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    console.log("Google Sign up Success", response);
+  };
 
-  // const handleGoogleFailure = (error: any) => {
-  //   console.log("Google Sign up Fail", error);
-  // };
+  const handleGoogleFailure = (error: any) => {
+    console.log("Google Sign up Fail", error);
+  };
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -182,7 +182,7 @@ const LoginForm = () => {
           <span>
             <FcGoogle className="w-6 h-6 hover:opacity-70" />
           </span> */}
-          {/* <GoogleLogin
+          <GoogleLogin
             className="w-full flex justify-center"
             clientId={clientId}
             onSuccess={handleGoogleSuccess}
@@ -200,7 +200,7 @@ const LoginForm = () => {
                 <span className="text-sm">Sign in with Google</span>
               </button>
             )}
-          /> */}
+          />
         </div>
       </form>
     </div>

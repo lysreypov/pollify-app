@@ -1,6 +1,5 @@
 import React from "react";
 import Avatar2 from "../../assets/userProfile/Avatar-2.png";
-import Avatar3 from "../../assets/userProfile/Avatar-3.png";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { TiDelete } from "react-icons/ti";
@@ -160,7 +159,12 @@ const AddPermission: React.FC<PopupModalProps> = ({ isOpen, onClose }) => {
                       onClick={(e) => PromoteMember(user, user.id)}
                       className="flex flex-row items-center space-x-3 w-full px-1 py-3 border-b border-gray-300 hover:bg-gray-100"
                     >
-                      <img className="w-8 h-8" src={Avatar3} alt="" />
+                      {/* <img className="w-8 h-8" src={Avatar3} alt="" /> */}
+                      <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full">
+                        <span className="text-gray-600 uppercase font-semibold">
+                          {user.username[0]}
+                        </span>
+                      </div>
                       <p className="text-sm text-black-secondary font-medium">
                         {user.username}
                       </p>
