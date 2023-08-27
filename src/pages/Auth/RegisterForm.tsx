@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import pollifyLogo from "../../assets/PolliFy.png";
-// import GoogleLogin, {
-//   GoogleLoginResponse,
-//   GoogleLoginResponseOffline,
-// } from "react-google-login";
+import GoogleLogin, {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
 import { gapi } from "gapi-script";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -84,15 +84,15 @@ const RegisterForm = () => {
     gapi.load("client:auth2", start);
   });
 
-  // const handleGoogleSuccess = (
-  //   response: GoogleLoginResponse | GoogleLoginResponseOffline
-  // ) => {
-  //   console.log("Google Sign up Success", response);
-  // };
+  const handleGoogleSuccess = (
+    response: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    console.log("Google Sign up Success", response);
+  };
 
-  // const handleGoogleFailure = (error: any) => {
-  //   console.log("Google Sign up Fail", error);
-  // };
+  const handleGoogleFailure = (error: any) => {
+    console.log("Google Sign up Fail", error);
+  };
 
   const registerUser = async () => {
     const userData = { username, email, password };
@@ -250,7 +250,7 @@ const RegisterForm = () => {
             <FcGoogle className="w-6 h-6 hover:opacity-70" />
           </button> */}
 
-          {/* <GoogleLogin
+          <GoogleLogin
             className="w-full flex justify-center"
             clientId={clientId}
             onSuccess={handleGoogleSuccess}
@@ -268,7 +268,7 @@ const RegisterForm = () => {
                 <span className="text-sm">Sign up with Google</span>
               </button>
             )}
-          /> */}
+          />
         </div>
       </form>
     </div>

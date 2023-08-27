@@ -12,7 +12,6 @@ import { RootState } from "../../../redux/store";
 function Poll1({ pollId }: any) {
   // poll state
   const [pollData, setPollData] = useState<Poll | null>(null);
-  console.log("pollData vote", pollData?.totalVote);
 
   const { email } = useSelector((state: RootState) => state.userCommunity);
 
@@ -23,6 +22,37 @@ function Poll1({ pollId }: any) {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState<any>("success");
+
+  // duration "2023-07-14 05:52:41"
+  // Handling Countdown
+  // In seconds (5 minutes)
+  // const [remainingTime, setRemainingTime] = useState(calculateRemainingTime());
+
+  // function calculateRemainingTime() {
+  //   if (pollData?.duration) {
+  //     const endTimeMillis = new Date(pollData?.duration).getTime();
+  //     const currentTime = new Date().getTime();
+  //     console.log("This is the time", endTimeMillis, currentTime);
+  //     const remainingSeconds = endTimeMillis - currentTime;
+
+  //     return remainingSeconds;
+  //   } else {
+  //     if (localStorage.getItem(`pollEndTime${pollId}`)) {
+  //       return parseInt(localStorage.getItem(`pollEndTime${pollId}`) ?? "0");
+  //     }
+  //     return 0;
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setRemainingTime(calculateRemainingTime());
+  //   }, 1000);
+  // }, [remainingTime]);
+
+  // useEffect(() => {
+  //   // Rerender the component when the pollId changes
+  // }, [remainingTime]);
 
   // update real time data with SSE
   useEffect(() => {
@@ -107,7 +137,9 @@ function Poll1({ pollId }: any) {
             </small>
           </div>
         </div>
-        <FcPieChart className="w-10 h-10" />
+        {/* <div className="w-24 text-xs lg:text-sm">
+          {remainingTime} Minutes Remaining
+        </div> */}
       </div>
       <p className="mt-5 font-light text-[15px] md:text-[17px]">
         {pollData?.pollQuestion}

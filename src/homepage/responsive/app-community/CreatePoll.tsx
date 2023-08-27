@@ -30,7 +30,7 @@ function CreatePoll() {
     (state: RootState) => state.userCommunity
   );
 
-  const { communityMembers } = useSelector(
+  const { communityMembers, isBackToCommunity } = useSelector(
     (state: RootState) => state.community
   );
 
@@ -88,9 +88,14 @@ function CreatePoll() {
       setHasAccess(false);
     }
   }, [hasAccess, communityMembers]);
+  console.log("back", isBackToCommunity);
 
   return (
-    <div className="relative bg-gray-100 w-full lg:w-full md:w-screen sm:w-full font-san min-h-screen">
+    <div
+      className={`${
+        isBackToCommunity ? "hidden " : ""
+      } bg-gray-100 w-full lg:w-full lg:flex lg:flex-col md:w-screen sm:w-full font-san min-h-screen`}
+    >
       <div className="bg-white flex flex-col pl-6 pr-7 py-6 gap-y-7">
         <div className="logo-profile-createPoll flex justify-between items-center">
           <div className="logo-text">
@@ -153,8 +158,7 @@ function CreatePoll() {
           {hasAccess && (
             <button
               onClick={handleCreatePoll}
-              className="bg-blue-custom hover:opacity-70 text-white whitespace-nowrap rounded-full px-4 py-2.5"
-              disabled={community.length === 0}
+              className="bg-blue-custom hover:opacity-70 text-white whitespace-nowrap rounded-full px-4 py-2.5 cursor-pointer"
             >
               Create Poll
             </button>

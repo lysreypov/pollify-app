@@ -6,12 +6,14 @@ import CommunityMembers from "./CommunityMembers";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { setIsCommunityProfileOpen } from "../../../redux/slices/Community";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { UserProfile } from "../../../components";
+import DeleteIcon from "../../../assets/icons/trash.svg";
 import api from "../../../utils/api";
 import Alert from "../../../components/Popup/Alert";
 
 function CommunityProfile() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [hasAccess, setHasAccess] = useState(false);
   const { isCommunityProfileOpen } = useSelector(
@@ -65,6 +67,43 @@ function CommunityProfile() {
     }
   };
 
+  // Handle leave community
+  const leaveCommunity = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = {
+      Authorization: `${accessToken}`,
+    };
+    api
+      .post(
+        `/community_members/leave/community/${communityId}`,
+        {},
+        { headers }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          window.location.reload();
+          navigate("/community");
+        }
+      })
+      .catch((err) => alert(err));
+  };
+
+  // Handle delete community
+  const deleteCommunity = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const headers = {
+      Authorization: `${accessToken}`,
+    };
+    api
+      .post(`/community/delete/${communityId}`, {}, { headers })
+      .then((res) => {
+        if (res.status === 200) {
+          window.location.reload();
+          navigate("/community");
+        }
+      })
+      .catch((err) => alert(err));
+  };
 
   const { username } = useSelector((state: RootState) => state.userCommunity);
   const location = useLocation();
@@ -196,6 +235,34 @@ function CommunityProfile() {
           </div>
           {/* <PopupModal isOpen={isOpen} onClose={closeModal} /> */}
           <div className="mb-2">{hasAccess && <CommunitySetting />}</div>
+
+          <div className="flex flex-col gap-y-5 mt-4 px-4 border-t py-5">
+            <div
+              onClick={() => {
+                if (currentProfile?.role !== "owner") {
+                  leaveCommunity();
+                } else {
+                  deleteCommunity();
+                }
+              }}
+              className="flex justify-start items-center gap-x-4 cursor-pointer"
+            >
+              <div>
+                <img
+                  className="w-6 h-6 text-gray-500"
+                  src={DeleteIcon}
+                  alt="Users Icon"
+                />
+              </div>
+
+              <h1>
+                {currentProfile?.role === "owner"
+                  ? "Leave and Delete"
+                  : "Leave"}
+              </h1>
+            </div>
+          </div>
+
           <div className="border-t"></div>
           <div className="pl-4 pt-4">
             <span className="mt-4">Current Members</span>

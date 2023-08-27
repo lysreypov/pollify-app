@@ -55,8 +55,8 @@ function Community() {
   return (
     <div
       className={`${
-        isBackToCommunity ? "w-full" : "w-0"
-      } absolute z-10 duration-300 bg-white lg:relative h-screen lg:w-2/6 lg:flex lg:flex-col overflow-hidden`}
+        isBackToCommunity ? "w-full" : "hidden"
+      } duration-300 bg-white lg:relative h-screen lg:w-2/6 lg:flex lg:flex-col overflow-hidden`}
     >
       <div className="logo-profile flex px-5 justify-between items-center">
         <div className="flex lg:justify-center w-full pt-5">
